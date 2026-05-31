@@ -1,5 +1,19 @@
 # Credit Risk Probability Model for Alternative Data
 
+This repository contains an exploratory analysis notebook and the supporting data for a credit risk modeling workflow. The current EDA notebook reads from `data/raw/data.csv`, which includes the transaction-level fields used for numeric and categorical analysis.
+
+## EDA Notebook
+
+The notebook at `notebooks/eda.ipynb` covers:
+
+- Basic dataset inspection and summary statistics
+- Missing-value analysis
+- Numeric and categorical distribution plots
+- Transaction time feature extraction
+- Correlation analysis and fraud-target exploration
+
+The notebook now defines categorical columns before plotting them, so it can run without the earlier `NameError`/`KeyError` issues tied to missing analysis variables and the wrong input file.
+
 ## Project Structure
 
 credit-risk-model/
