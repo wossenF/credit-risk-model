@@ -1,0 +1,12 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      MLFLOW_TRACKING_URI: file:///app/mlruns
+      MLFLOW_MODEL_NAME: CreditRiskModel
+    volumes:
+      - ./mlruns:/app/mlruns:ro

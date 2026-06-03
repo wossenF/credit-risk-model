@@ -1,10 +1,10 @@
 import pandas as pd
 
 from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
-from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.impute import SimpleImputer
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
 from src.rfm_target import create_rfm_target
 
@@ -13,7 +13,6 @@ from src.rfm_target import create_rfm_target
 # 1. FEATURE ENGINEERING
 # ===============================
 class FeatureEngineer(BaseEstimator, TransformerMixin):
-
     def __init__(self):
         pass
 
@@ -21,11 +20,12 @@ class FeatureEngineer(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X):
-
         df = X.copy()
 
         # Convert datetime
-        df["TransactionStartTime"] = pd.to_datetime(df["TransactionStartTime"])
+        df["TransactionStartTime"] = pd.to_datetime(
+            df["TransactionStartTime"]
+        )
 
         # Time features
         df["hour"] = df["TransactionStartTime"].dt.hour
@@ -38,7 +38,7 @@ class FeatureEngineer(BaseEstimator, TransformerMixin):
             total_amount=("Amount", "sum"),
             avg_amount=("Amount", "mean"),
             std_amount=("Amount", "std"),
-            transaction_count=("TransactionId", "count")
+            transaction_count=("TransactionId", "count"),
         ).reset_index()
 
         # Fill NaN std values (single transaction customers)
@@ -46,27 +46,24 @@ class FeatureEngineer(BaseEstimator, TransformerMixin):
 
         # Merge back customer-level features
         df = df.merge(agg, on="CustomerId", how="left")
-
         return df
 
 
 def add_target_variable(df):
-
     target_df = create_rfm_target(df)
 
     df = df.merge(
         target_df,
         on="CustomerId",
-        how="left"
+        how="left",
     )
-
     return df
+
 
 # ===============================
 # 2. PIPELINE BUILDER
 # ===============================
 def build_pipeline():
-
     numeric_features = [
         "Amount",
         "Value",
@@ -77,7 +74,7 @@ def build_pipeline():
         "total_amount",
         "avg_amount",
         "std_amount",
-        "transaction_count"
+        "transaction_count",
     ]
 
     categorical_features = [
@@ -85,29 +82,32 @@ def build_pipeline():
         "ProviderId",
         "ProductCategory",
         "ChannelId",
-        "PricingStrategy"
+        "PricingStrategy",
     ]
 
     numeric_transformer = Pipeline(steps=[
         ("imputer", SimpleImputer(strategy="median")),
-        ("scaler", StandardScaler())
+        ("scaler", StandardScaler()),
     ])
 
     categorical_transformer = Pipeline(steps=[
         ("imputer", SimpleImputer(strategy="most_frequent")),
-        ("encoder", OneHotEncoder(handle_unknown="ignore"))
+        ("encoder", OneHotEncoder(handle_unknown="ignore")),
     ])
 
     preprocessor = ColumnTransformer(
         transformers=[
             ("num", numeric_transformer, numeric_features),
-            ("cat", categorical_transformer, categorical_features)
+            ("cat", categorical_transformer, categorical_features),
         ]
     )
 
     pipeline = Pipeline(steps=[
         ("feature_engineering", FeatureEngineer()),
-        ("preprocessor", preprocessor)
+        ("preprocessor", preprocessor),
     ])
 
     return pipeline
+
+# End of module.
+

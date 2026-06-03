@@ -14,6 +14,7 @@ from sklearn.metrics import (
     roc_auc_score
 )
 
+
 # =========================
 # LOAD DATA
 # =========================
@@ -36,6 +37,7 @@ X_train, X_test, y_train, y_test = train_test_split(
     stratify=y
 )
 
+
 # =========================
 # METRICS FUNCTION
 # =========================
@@ -49,6 +51,7 @@ def evaluate(model, X_test, y_test):
         "f1": f1_score(y_test, preds),
         "roc_auc": roc_auc_score(y_test, preds)
     }
+
 
 # =========================
 # MLflow setup
@@ -90,6 +93,10 @@ with mlflow.start_run(run_name="RandomForest"):
 
     mlflow.log_params(grid.best_params_)
     mlflow.log_metrics(metrics)
-    mlflow.sklearn.log_model(best_rf, "model", registered_model_name="CreditRiskModel")
+    mlflow.sklearn.log_model(
+        best_rf,
+        "model",
+        registered_model_name="CreditRiskModel",
+    )
 
 print("Training complete!")

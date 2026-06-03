@@ -1,6 +1,7 @@
 import pandas as pd
 from src.data_processing import FeatureEngineer, create_rfm_target
 
+
 def test_feature_engineering():
 
     df = pd.DataFrame({
